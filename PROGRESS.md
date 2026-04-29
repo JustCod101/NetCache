@@ -18,3 +18,21 @@
 ### 下一阶段计划
 - Phase 2 按文档第 3 节实现 `Frame`、`OpCode`、`Status`、`ResultType`、`Request`、`Response` 与 Netty 编解码器。
 - Phase 2 测试必须覆盖协议 round-trip、半包与粘包场景。
+
+## Phase 2 — 协议层
+
+### Why / 偏离说明（实施前）
+- 第 3.1 节标题写“固定头 22 字节”，但字段表、偏移图、`LengthFieldBasedFrameDecoder(lengthFieldOffset=14, lengthFieldLength=4)` 以及附录 A 的示例代码均对应 `4 + 1 + 1 + 8 + 4 = 18` 字节头。Phase 2 采用 18 字节头，以保证二进制布局与字段定义和 Netty length-field 偏移一致。
+
+### 产出
+- 实现 `Frame`、`OpCode`、`Status`、`ResultType`、`Request`、`Response`。
+- 实现 `ProtocolEncoder`、`ProtocolDecoder`、`MagicValidator`，固定 magic/version/type/requestId/length/payload 布局，并限制 payload ≤ 16MB。
+- 添加 EmbeddedChannel 测试覆盖帧头字节布局、Frame round-trip、请求/响应 payload round-trip、半包、粘包、非法 magic。
+
+### 验证结果
+- `mvn -pl netcache-protocol -am verify`：通过。
+- 测试统计：`netcache-common` 15 tests + `netcache-protocol` 7 tests，0 failures，0 errors，0 skipped。
+
+### 下一阶段计划
+- Phase 3 实现 `StorageEngine`、`StringValue`、`CounterValue`、16 段 LRU、TTL 时间轮、内存水位与 LRU 淘汰。
+- Phase 3 测试必须覆盖并发 GET/SET、TTL 删除与高水位淘汰。
