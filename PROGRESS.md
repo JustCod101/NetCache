@@ -102,3 +102,19 @@
 ### 下一阶段计划
 - Phase 7 实现主从复制：`ReplicationBacklog`、`ReplStream`、`MasterReplicator`、`SlaveReplicator`。
 - Phase 7 测试需要覆盖 master 写入后 slave 1s 内可见，以及断网重连后增量补齐。
+
+## Phase 7 — 主从复制
+
+### 产出
+- 实现 `ReplicationBacklog`，提供有界字节 backlog、递增 offset 与 `readFrom(offset)` 增量读取。
+- 实现 `ReplStream`，按 8 字节 offset 前缀 + OpCode + Key/Value 长度体编码写命令。
+- 实现 `MasterReplicator` 与 `SlaveReplicator`，master 写命令进入 backlog 并异步 fanout 到已注册 slave，slave 可按 offset 重连补齐。
+
+### 验证结果
+- `mvn -pl netcache-cluster -am verify`：通过。
+- 测试统计：`netcache-common` 15 tests + `netcache-protocol` 7 tests + `netcache-storage` 15 tests + `netcache-cluster` 8 tests，0 failures，0 errors，0 skipped。
+- 覆盖场景：backlog 增量读取与越界保护；复制流 round-trip；master 写入后 slave 1s 内可见；slave 重连后从 backlog 增量补齐遗漏写入。
+
+### 下一阶段计划
+- Phase 8 实现 Sentinel：`SentinelNode`、`HealthChecker`、`RaftLite`、`FailoverCoordinator`、`QuorumDecision`。
+- Phase 8 测试需要覆盖 kill master 后 3s 内选新 master，并持续允许写入。
