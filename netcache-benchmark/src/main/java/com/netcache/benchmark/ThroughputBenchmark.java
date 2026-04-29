@@ -11,16 +11,26 @@ import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
+import org.openjdk.jmh.annotations.Threads;
 import org.openjdk.jmh.annotations.Warmup;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Measures single-node GET/SET throughput over one real TCP connection.
+ * Pipeline is disabled because every synchronous client call waits for its response.
+ */
 @BenchmarkMode(Mode.Throughput)
 @OutputTimeUnit(TimeUnit.SECONDS)
-@Warmup(iterations = 1, time = 1)
-@Measurement(iterations = 2, time = 1)
-@Fork(1)
+@Warmup(iterations = 3, time = 3)
+@Measurement(iterations = 5, time = 5)
+@Fork(2)
+@Threads(1)
 public class ThroughputBenchmark {
+
+    private static final int KEY_COUNT = 4096;
+    private static final int VALUE_SIZE = 1024; // 1KB as per architecture spec
+
     @Benchmark
     public void set(BenchmarkState state) {
         state.node.client().set(state.node.nextKey(), state.node.value());
@@ -37,7 +47,7 @@ public class ThroughputBenchmark {
 
         @Setup(Level.Trial)
         public void setUp() throws Exception {
-            node = new LocalBenchmarkNode(256, 128);
+            node = new LocalBenchmarkNode(KEY_COUNT, VALUE_SIZE, 1);
             node.start();
         }
 

@@ -4,7 +4,6 @@ import com.netcache.protocol.Frame;
 import com.netcache.protocol.OpCode;
 import com.netcache.protocol.ResultType;
 import com.netcache.protocol.Status;
-import com.netcache.protocol.codec.MagicValidator;
 import com.netcache.protocol.codec.ProtocolDecoder;
 import com.netcache.protocol.codec.ProtocolEncoder;
 import com.netcache.protocol.command.Request;
@@ -26,7 +25,6 @@ class CommandDispatcherTest {
     void dispatchesSetThenGetThroughProtocolPipeline() {
         try (StorageEngine storage = new StorageEngine()) {
             EmbeddedChannel server = new EmbeddedChannel(
-                    new MagicValidator(),
                     new ProtocolDecoder(),
                     new ProtocolEncoder(),
                     new CommandDispatcher(HandlerRegistry.singleNode(storage))

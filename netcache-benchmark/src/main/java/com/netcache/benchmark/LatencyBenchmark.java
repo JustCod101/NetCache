@@ -11,16 +11,26 @@ import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
+import org.openjdk.jmh.annotations.Threads;
 import org.openjdk.jmh.annotations.Warmup;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Measures single-node GET/SET latency distribution over one real TCP connection.
+ * Pipeline is disabled because every synchronous client call waits for its response.
+ */
 @BenchmarkMode(Mode.SampleTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-@Warmup(iterations = 1, time = 1)
-@Measurement(iterations = 2, time = 1)
-@Fork(1)
+@Warmup(iterations = 3, time = 3)
+@Measurement(iterations = 5, time = 5)
+@Fork(2)
+@Threads(1)
 public class LatencyBenchmark {
+
+    private static final int KEY_COUNT = 4096;
+    private static final int VALUE_SIZE = 1024; // 1KB as per architecture spec
+
     @Benchmark
     public byte[] get(BenchmarkState state) {
         return state.node.client().get(state.node.nextKey());
@@ -37,7 +47,7 @@ public class LatencyBenchmark {
 
         @Setup(Level.Trial)
         public void setUp() throws Exception {
-            node = new LocalBenchmarkNode(256, 128);
+            node = new LocalBenchmarkNode(KEY_COUNT, VALUE_SIZE, 1);
             node.start();
         }
 

@@ -2,7 +2,6 @@ package com.netcache.client.pool;
 
 import com.netcache.client.routing.ResponseRouter;
 import com.netcache.protocol.Frame;
-import com.netcache.protocol.codec.MagicValidator;
 import com.netcache.protocol.codec.ProtocolDecoder;
 import com.netcache.protocol.codec.ProtocolEncoder;
 import com.netcache.protocol.command.Request;
@@ -48,7 +47,6 @@ final class TcpNodeChannel implements NodeChannel {
                         @Override
                         protected void initChannel(SocketChannel channel) {
                             ChannelPipeline pipeline = channel.pipeline();
-                            pipeline.addLast(new MagicValidator());
                             pipeline.addLast(new ProtocolDecoder());
                             pipeline.addLast(new ProtocolEncoder());
                             pipeline.addLast(responseRouter);

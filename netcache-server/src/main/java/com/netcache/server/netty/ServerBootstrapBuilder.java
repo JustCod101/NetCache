@@ -2,7 +2,6 @@ package com.netcache.server.netty;
 
 import com.netcache.protocol.codec.ProtocolDecoder;
 import com.netcache.protocol.codec.ProtocolEncoder;
-import com.netcache.protocol.codec.MagicValidator;
 import com.netcache.server.ServerConfig;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
@@ -34,7 +33,6 @@ public final class ServerBootstrapBuilder {
                     @Override
                     protected void initChannel(SocketChannel channel) {
                         ChannelPipeline pipeline = channel.pipeline();
-                        pipeline.addLast(new MagicValidator());
                         pipeline.addLast(new ProtocolDecoder());
                         pipeline.addLast(new ProtocolEncoder());
                         pipeline.addLast(dispatcher);
