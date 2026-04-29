@@ -86,3 +86,19 @@
 ### 下一阶段计划
 - Phase 6 实现一致性哈希分片：`HashRing`、`VirtualNode`、`ClusterTopology`、客户端 `TopologyCache` 路由与 MOVED 响应处理。
 - Phase 6 测试需要覆盖 3 节点下 100,000 key 分布偏差 < 5% 与动态加节点迁移规划。
+
+## Phase 6 — 一致性哈希分片
+
+### 产出
+- 实现 `HashRing`、`VirtualNode`、`NodeEndpoint` 与 `ClusterTopology`，默认每节点 160 个虚拟节点，使用 `HashUtil.hash64(byte[])` 对原始 key bytes 路由。
+- 实现 `KeyMigration`、`MigrationPlanner`、`MigrationExecutor` 骨架，节点加入/移除会生成 hash 区间迁移计划，迁移限速常量为 5000 key/s。
+- 客户端 `TopologyCache` 支持注入 `ClusterTopology` 后按拓扑 endpoint 路由，新增 `MovedHandler` 作为 MOVED 后拓扑刷新入口。
+
+### 验证结果
+- `mvn -pl netcache-cluster -am verify`：通过。
+- `mvn -pl netcache-client -am verify`：通过。
+- 覆盖场景：3 节点 100,000 key 分布偏差 < 5%；节点加入/移除产生迁移区间；旧 epoch 拓扑更新被忽略；客户端拓扑路由返回目标 endpoint；Phase 5 客户端 1000 线程 500,000 次 SET/GET 仍通过。
+
+### 下一阶段计划
+- Phase 7 实现主从复制：`ReplicationBacklog`、`ReplStream`、`MasterReplicator`、`SlaveReplicator`。
+- Phase 7 测试需要覆盖 master 写入后 slave 1s 内可见，以及断网重连后增量补齐。
