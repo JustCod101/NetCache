@@ -1,0 +1,111 @@
+services:
+  master-1:
+    image: maven:3.9.9-eclipse-temurin-21
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    command: >-
+      bash -lc "mvn -q -pl netcache-server -am exec:java
+      -Dexec.mainClass=com.netcache.server.NetCacheServer
+      -Dnetcache.host=0.0.0.0
+      -Dnetcache.port=7001"
+    ports:
+      - "7001:7001"
+
+  master-2:
+    image: maven:3.9.9-eclipse-temurin-21
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    command: >-
+      bash -lc "mvn -q -pl netcache-server -am exec:java
+      -Dexec.mainClass=com.netcache.server.NetCacheServer
+      -Dnetcache.host=0.0.0.0
+      -Dnetcache.port=7002"
+    ports:
+      - "7002:7002"
+
+  master-3:
+    image: maven:3.9.9-eclipse-temurin-21
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    command: >-
+      bash -lc "mvn -q -pl netcache-server -am exec:java
+      -Dexec.mainClass=com.netcache.server.NetCacheServer
+      -Dnetcache.host=0.0.0.0
+      -Dnetcache.port=7003"
+    ports:
+      - "7003:7003"
+
+  slave-1:
+    image: maven:3.9.9-eclipse-temurin-21
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    command: >-
+      bash -lc "mvn -q -pl netcache-server -am exec:java
+      -Dexec.mainClass=com.netcache.server.NetCacheServer
+      -Dnetcache.host=0.0.0.0
+      -Dnetcache.port=7101"
+    ports:
+      - "7101:7101"
+
+  slave-2:
+    image: maven:3.9.9-eclipse-temurin-21
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    command: >-
+      bash -lc "mvn -q -pl netcache-server -am exec:java
+      -Dexec.mainClass=com.netcache.server.NetCacheServer
+      -Dnetcache.host=0.0.0.0
+      -Dnetcache.port=7102"
+    ports:
+      - "7102:7102"
+
+  slave-3:
+    image: maven:3.9.9-eclipse-temurin-21
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    command: >-
+      bash -lc "mvn -q -pl netcache-server -am exec:java
+      -Dexec.mainClass=com.netcache.server.NetCacheServer
+      -Dnetcache.host=0.0.0.0
+      -Dnetcache.port=7103"
+    ports:
+      - "7103:7103"
+
+  sentinel-1:
+    image: maven:3.9.9-eclipse-temurin-21
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    command: >-
+      bash -lc "mvn -q -pl netcache-sentinel -am exec:java
+      -Dexec.mainClass=com.netcache.sentinel.SentinelMain
+      -Dnetcache.sentinel.id=sentinel-1
+      -Dnetcache.sentinel.quorum=2"
+
+  sentinel-2:
+    image: maven:3.9.9-eclipse-temurin-21
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    command: >-
+      bash -lc "mvn -q -pl netcache-sentinel -am exec:java
+      -Dexec.mainClass=com.netcache.sentinel.SentinelMain
+      -Dnetcache.sentinel.id=sentinel-2
+      -Dnetcache.sentinel.quorum=2"
+
+  sentinel-3:
+    image: maven:3.9.9-eclipse-temurin-21
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    command: >-
+      bash -lc "mvn -q -pl netcache-sentinel -am exec:java
+      -Dexec.mainClass=com.netcache.sentinel.SentinelMain
+      -Dnetcache.sentinel.id=sentinel-3
+      -Dnetcache.sentinel.quorum=2"

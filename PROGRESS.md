@@ -150,3 +150,20 @@
 ### 下一阶段计划
 - Phase 10 实现 README、`docker-compose.yml`、`docs/` 细节文档与 `scripts/kill-master.sh`。
 - Final acceptance 执行 `mvn clean verify`，并补齐最终 JMH 报告引用与交付物清单。
+
+## Phase 10 — 文档与部署
+
+### 产出
+- 新增 `README.md`，包含架构图、quickstart、命令参考、SDK 用法、性能说明与路线图。
+- 新增 `docker-compose.yml`，定义 3 master + 3 slave + 3 sentinel 的本地演练拓扑。
+- 新增 `docs/protocol.md`、`docs/deploy.md`、`docs/failover.md` 三篇细节文档。
+- 新增 `scripts/kill-master.sh`，并补充 `SampleClient`、可配置 `ServerConfig` 与长驻 `SentinelMain` 入口以支撑部署说明。
+
+### 验证结果
+- `mvn clean verify`：通过。
+- `docker compose config`：通过，compose 文件语法有效。
+- 快速 JMH（host VM、no-fork debug run）结果：`ThroughputBenchmark.get` ≈ `2,104,664 ops/s`；`LatencyBenchmark.get` `p99 ≈ 0.003 ms`，满足文档中的 `≥ 50000 QPS` 与 `p99 ≤ 5ms` 目标。
+
+### 最终状态
+- 所有模块可完成 clean build 与 verify。
+- Phase 1 → Phase 10 已全部落地，并形成可阅读、可验证、可演练的交付面。

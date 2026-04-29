@@ -20,6 +20,15 @@ public record ServerConfig(String host, int port, int bossThreads, int workerThr
         return new ServerConfig("0.0.0.0", 7001, 1, 0);
     }
 
+    public static ServerConfig fromSystemProperties() {
+        ServerConfig defaults = defaults();
+        return new ServerConfig(
+                System.getProperty("netcache.host", defaults.host()),
+                Integer.getInteger("netcache.port", defaults.port()),
+                Integer.getInteger("netcache.bossThreads", defaults.bossThreads()),
+                Integer.getInteger("netcache.workerThreads", defaults.workerThreads()));
+    }
+
     public int effectiveWorkerThreads() {
         return workerThreads == 0 ? Runtime.getRuntime().availableProcessors() * 2 : workerThreads;
     }

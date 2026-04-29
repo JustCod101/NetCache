@@ -11,7 +11,7 @@ public final class NetCacheServer {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        ServerConfig config = ServerConfig.defaults();
+        ServerConfig config = ServerConfig.fromSystemProperties();
         NodeLifecycle lifecycle = new NodeLifecycle(config);
         Runtime.getRuntime().addShutdownHook(new Thread(lifecycle::stop, "nc-server-shutdown"));
         lifecycle.start();
