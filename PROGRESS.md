@@ -134,3 +134,19 @@
 ### 下一阶段计划
 - Phase 9 实现 `ThroughputBenchmark`、`LatencyBenchmark`、`FailoverScenario`。
 - Phase 9 验证单节点吞吐 ≥ 50000 QPS、p99 ≤ 5ms，并补充故障演练基准输出。
+
+## Phase 9 — 基准与压测
+
+### 产出
+- 在 `netcache-benchmark` 新增 `ThroughputBenchmark`、`LatencyBenchmark` 两个 JMH 基准类。
+- 新增 `FailoverScenario`，以哨兵故障转移流程演练恢复时延与拓扑切换。
+- 新增 `BenchmarkSmokeTest`，在 `mvn verify` 下验证 benchmark 状态初始化、基准入口和 failover 场景可执行。
+
+### 验证结果
+- `mvn -pl netcache-benchmark -am verify`：通过。
+- 测试统计：`netcache-common` 15 tests + `netcache-protocol` 7 tests + `netcache-storage` 15 tests + `netcache-cluster` 8 tests + `netcache-server` 2 tests + `netcache-client` 4 tests + `netcache-benchmark` 3 tests，0 failures，0 errors，0 skipped。
+- 覆盖场景：JMH state 可初始化并执行 GET/SET；故障演练场景在 smoke 验证中恢复耗时 < 3s。
+
+### 下一阶段计划
+- Phase 10 实现 README、`docker-compose.yml`、`docs/` 细节文档与 `scripts/kill-master.sh`。
+- Final acceptance 执行 `mvn clean verify`，并补齐最终 JMH 报告引用与交付物清单。
