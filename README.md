@@ -1,5 +1,7 @@
 # NetCache
 
+👶 **[新人入职请先读 ONBOARDING.md](./ONBOARDING.md)**
+
 NetCache is a lightweight distributed KV cache built with Java 17 and Netty 4. It implements a focused Redis-style command set, consistent-hash routing, asynchronous master-slave replication, and Sentinel-style failover primitives for local experimentation and incremental evolution.
 
 ## What It Is / What It Is Not
