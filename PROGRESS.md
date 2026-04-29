@@ -118,3 +118,19 @@
 ### 下一阶段计划
 - Phase 8 实现 Sentinel：`SentinelNode`、`HealthChecker`、`RaftLite`、`FailoverCoordinator`、`QuorumDecision`。
 - Phase 8 测试需要覆盖 kill master 后 3s 内选新 master，并持续允许写入。
+
+## Phase 8 — Sentinel 哨兵
+
+### 产出
+- 在 `netcache-cluster` 新增 `sentinel/` 包，实现 `SentinelNode`、`HealthChecker`、`QuorumDecision`、`RaftLite`、`FailoverCoordinator`。
+- 实现 SDOWN → ODOWN → leader 选举 → slave 提升 → 拓扑 epoch 递增与广播载体结果对象。
+- 在 `netcache-sentinel` 新增 `SentinelMain` 入口，并补齐 sentinel 模块测试依赖。
+
+### 验证结果
+- `mvn -pl netcache-sentinel -am verify`：通过。
+- 测试统计：`netcache-common` 15 tests + `netcache-protocol` 7 tests + `netcache-storage` 15 tests + `netcache-cluster` 8 tests + `netcache-client` 4 tests + `netcache-sentinel` 2 tests，0 failures，0 errors，0 skipped。
+- 覆盖场景：最高复制 offset 的 slave 被提升为新 master；master 宕机后客户端在 3s 内路由到新 master 并继续写入。
+
+### 下一阶段计划
+- Phase 9 实现 `ThroughputBenchmark`、`LatencyBenchmark`、`FailoverScenario`。
+- Phase 9 验证单节点吞吐 ≥ 50000 QPS、p99 ≤ 5ms，并补充故障演练基准输出。
