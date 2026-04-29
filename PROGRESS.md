@@ -70,3 +70,19 @@
 ### 下一阶段计划
 - Phase 5 实现 Java 客户端 SDK 单机版：`ClientBuilder`、`DefaultNetCacheClient`、`ConnectionPool`、`ResponseRouter`、同步/异步 API。
 - Phase 5 测试需要覆盖并发 SET/GET 成功路径。
+
+## Phase 5 — 客户端 SDK 单机版
+
+### 产出
+- 实现 `NetCacheClient` 同步/异步 API 与 `ClientBuilder`，支持 seeds、poolSizePerNode、connectTimeout、readTimeout、maxRetries。
+- 实现 `ConnectionPool`、`NodeChannel`、`TcpNodeChannel`、`TopologyCache`、`RequestRouter`、`ResponseRouter` 与 `RetryPolicy`。
+- 单节点路由使用 seed 直连；生产通道使用 Netty pipeline `MagicValidator -> ProtocolDecoder -> ProtocolEncoder -> ResponseRouter`。
+
+### 验证结果
+- `mvn -pl netcache-client -am verify`：通过。
+- 测试统计：`netcache-common` 15 tests + `netcache-protocol` 7 tests + `netcache-storage` 15 tests + `netcache-client` 3 tests，0 failures，0 errors，0 skipped。
+- 覆盖场景：同步/异步 SET/GET/INCR/EXPIRE/DEL；RetryPolicy 失败后重试；1000 并发线程共 500,000 次 SET/GET 全部成功。
+
+### 下一阶段计划
+- Phase 6 实现一致性哈希分片：`HashRing`、`VirtualNode`、`ClusterTopology`、客户端 `TopologyCache` 路由与 MOVED 响应处理。
+- Phase 6 测试需要覆盖 3 节点下 100,000 key 分布偏差 < 5% 与动态加节点迁移规划。
