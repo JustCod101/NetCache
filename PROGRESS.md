@@ -53,3 +53,20 @@
 ### 下一阶段计划
 - Phase 4 实现单机 Netty 服务端、`CommandDispatcher` 与 GET/SET/DEL/EXPIRE/TTL/EXISTS/INCR/DECR/PING/INFO handler。
 - Phase 4 需要跑通单机端到端测试，验证请求帧经协议层进入 storage 并返回响应。
+
+## Phase 4 — 单机服务端
+
+### 产出
+- 实现 `ServerConfig`、`NetCacheServer`、`ServerBootstrapBuilder`、`NodeLifecycle` 与 `MetricsCollector`。
+- 实现 `CommandDispatcher`，将 `Frame` payload 解码为 `Request`，分派到单机 command handler，并编码 `Response` 回写。
+- 实现 GET/SET/DEL/EXPIRE/TTL/EXISTS/INCR/DECR/PING/INFO handlers，参数与 TTL 单位按 Phase 3 存储语义执行。
+- 服务端 pipeline 加入 `MagicValidator -> ProtocolDecoder -> ProtocolEncoder -> CommandDispatcher`，其中 `ProtocolEncoder` 放在 dispatcher 前面以支持 `ctx.writeAndFlush(...)` 的反向 outbound 传播。
+
+### 验证结果
+- `mvn -pl netcache-server -am verify`：通过。
+- 测试统计：`netcache-common` 15 tests + `netcache-protocol` 7 tests + `netcache-storage` 15 tests + `netcache-server` 2 tests，0 failures，0 errors，0 skipped。
+- 覆盖场景：全部单机命令 handler；EmbeddedChannel 端到端 SET 后 GET，走 magic 校验、协议解码、命令分派、协议编码。
+
+### 下一阶段计划
+- Phase 5 实现 Java 客户端 SDK 单机版：`ClientBuilder`、`DefaultNetCacheClient`、`ConnectionPool`、`ResponseRouter`、同步/异步 API。
+- Phase 5 测试需要覆盖并发 SET/GET 成功路径。
